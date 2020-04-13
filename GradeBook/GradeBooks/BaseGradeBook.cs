@@ -133,15 +133,12 @@ namespace GradeBook.GradeBooks
             var standardPoints = 0d;
             var honorPoints = 0d;
             var dualEnrolledPoints = 0d;
-
             foreach (var student in Students)
             {
                 student.LetterGrade = GetLetterGrade(student.AverageGrade);
                 student.GPA = GetGPA(student.LetterGrade, student.Type);
-
                 Console.WriteLine("{0} ({1}:{2}) GPA: {3}.", student.Name, student.LetterGrade, student.AverageGrade, student.GPA);
                 allStudentsPoints += student.AverageGrade;
-
                 switch (student.Enrollment)
                 {
                     case EnrollmentType.Campus:
@@ -156,8 +153,9 @@ namespace GradeBook.GradeBooks
                     case EnrollmentType.International:
                         internationalPoints += student.AverageGrade;
                         break;
+                    default:
+                        break;
                 }
-
                 switch (student.Type)
                 {
                     case StudentType.Standard:
@@ -169,33 +167,34 @@ namespace GradeBook.GradeBooks
                     case StudentType.DualEnrolled:
                         dualEnrolledPoints += student.AverageGrade;
                         break;
+                    default:
+                        break;
                 }
             }
-
             // #todo refactor into it's own method with calculations performed here
-            Console.WriteLine("Average Grade of all students is " + (allStudentsPoints / Students.Count));
+            Console.WriteLine($"Average Grade of all students is {allStudentsPoints / Students.Count}");
             if (campusPoints != 0)
-                Console.WriteLine("Average for only local students is " + (campusPoints / Students.Where(e => e.Enrollment == EnrollmentType.Campus).Count()));
-            if (statePoints != 0)
-                Console.WriteLine("Average for only state students (excluding local) is " + (statePoints / Students.Where(e => e.Enrollment == EnrollmentType.State).Count()));
-            if (nationalPoints != 0)
-                Console.WriteLine("Average for only national students (excluding state and local) is " + (nationalPoints / Students.Where(e => e.Enrollment == EnrollmentType.National).Count()));
-            if (internationalPoints != 0)
-                Console.WriteLine("Average for only international students is " + (internationalPoints / Students.Where(e => e.Enrollment == EnrollmentType.International).Count()));
-            if (standardPoints != 0)
-                Console.WriteLine("Average for students excluding honors and dual enrollment is " + (standardPoints / Students.Where(e => e.Type == StudentType.Standard).Count()));
-            if (honorPoints != 0)
-                Console.WriteLine("Average for only honors students is " + (honorPoints / Students.Where(e => e.Type == StudentType.Honors).Count()));
-            if (dualEnrolledPoints != 0)
-                Console.WriteLine("Average for only dual enrolled students is " + (dualEnrolledPoints / Students.Where(e => e.Type == StudentType.DualEnrolled).Count()));
+                Console.WriteLine($"Average grade of " +
+                    $"campus student : {campusPoints / Students.Count(x => x.Enrollment == EnrollmentType.Campus)}");
+            Console.WriteLine($"Average for only state students: " +
+                $"{(statePoints / Students.Count(x => x.Enrollment == EnrollmentType.State))}");
+            Console.WriteLine($"Average for only national students: " +
+                $"{nationalPoints / Students.Where(x => x.Enrollment == EnrollmentType.National).Count()}");
+            Console.WriteLine($"Average for only international students is : " +
+                $"{internationalPoints/Students.Count(x=>x.Enrollment == EnrollmentType.International)}");
+            Console.WriteLine($"Average for standard : " +
+                $"{standardPoints/Students.Count(x=>x.Type == StudentType.Standard)}");
+            Console.WriteLine($"Average of honor : " +
+                $"{honorPoints/Students.Count(x=>x.Type == StudentType.Honors)}");
+            Console.WriteLine($"Average of dualEnrolledPoints : " +
+                $"{dualEnrolledPoints/Students.Count(x=>x.Type == StudentType.DualEnrolled)}");
         }
 
         public virtual void CalculateStudentStatistics(string name)
         {
-            var student = Students.FirstOrDefault(e => e.Name == name);
+            var student = Students.FirstOrDefault(s => s.Name == name);
             student.LetterGrade = GetLetterGrade(student.AverageGrade);
             student.GPA = GetGPA(student.LetterGrade, student.Type);
-
             Console.WriteLine("{0} ({1}:{2}) GPA: {3}.", student.Name, student.LetterGrade, student.AverageGrade, student.GPA);
             Console.WriteLine();
             Console.WriteLine("Grades:");
